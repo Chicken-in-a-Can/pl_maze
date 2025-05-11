@@ -45,18 +45,15 @@ memberCheck([H|_], H).
 % Recursively iterate through the map, finding the correct path
 iter_map(_, [EndX, EndY], [EndX, EndY], _, _).
 
-iter_map(Map, [X, Y], [EndX, EndY], Visited, Actions) :-
+iter_map(Map, [X, Y], [EndX, EndY], Visited, [Dir | Actions]) :-
     move([X, Y], [Nx, Ny], Dir),
+    \+ memberCheck(Visited, [Nx, Ny]),
     (check_loc(Map, Nx, Ny, f); check_loc(Map, Nx, Ny, e)),
-    memberCheck(Visited, [Nx, Ny]),
-    write("Iterating"), nl,
-    iter_map(Map, [Nx, Ny], [EndX, EndY], [Visited|[Nx, Ny]], [Actions|Dir]).
+    iter_map(Map, [Nx, Ny], [EndX, EndY], [[Nx, Ny] | Visited], Actions).
 
 % Main function to call
 %find_exit([], _) :- false.
 find_exit(Map, Actions) :-
     check_loc(Map, X, Y, s),
     check_loc(Map, EndX, EndY, e),
-    write("Initial position at: ("), write(X), write(","), write(Y), write(")"), nl,
-    write("Final position at: ("), write(EndX), write(","), write(EndY), write(")"), nl,
-    iter_map(Map, [X, Y], [EndX, EndY], [], Actions).
+    iter_map(Map, [X, Y], [EndX, EndY], [[X, Y]], Actions).
